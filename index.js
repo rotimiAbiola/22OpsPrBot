@@ -1,110 +1,66 @@
-const express = require('express');
-const { Octokit } = require('@octokit/rest');
-const { createAppAuth } = require('@octokit/auth-app');
-const { Webhooks, createNodeMiddleware } = require('@octokit/webhooks');
-require('dotenv').config();
-const fs = require('fs');
-const path = require('path');
-const { exec } = require('child_process');
+const { Probot } = require('probot');
 
-// Load environment variables from the .env file
-const { APP_ID, PRIVATE_KEY_PATH, WEBHOOK_SECRET, PORT } = process.env;
+module.exports = (app) => {
+  // Event handler for when a pull request is opened
+  app.on('pull_request.opened', async (context) => {
+    const { repository, pull_request } = context.payload;
 
-// Read the private key for GitHub App authentication
-const privateKey = fs.readFileSync(path.join(__dirname, PRIVATE_KEY_PATH), 'utf8');
-
-// Initialize Octokit, which is GitHub's official SDK for interacting with the GitHub API
-const octokit = new Octokit({
-  authStrategy: createAppAuth,
-  auth: {
-    appId: APP_ID,
-    privateKey: privateKey,
-  },
-});
-
-// Initialize GitHub Webhooks handler
-const webhooks = new Webhooks({
-  secret: WEBHOOK_SECRET,
-});
-
-// Event handler for when a pull request is opened
-webhooks.on('pull_request.opened', async ({ id, name, payload }) => {
-  const { repository, pull_request } = payload;
-
-  // Post a status update to the PR's commit to indicate the CI/CD pipeline is running
-  await octokit.repos.createCommitStatus({
-    owner: repository.owner.login,
-    repo: repository.name,
-    sha: pull_request.head.sha,
-    state: 'pending',
-    context: 'CI/CD',
-    description: 'CI/CD pipeline is running',
-    target_url: 'http://ci.example.com/build/status' // URL to the CI/CD status page
-  });
-
-  // Post a comment on the PR with a deployment link (simulated)
-  await octokit.issues.createComment({
-    owner: repository.owner.login,
-    repo: repository.name,
-    issue_number: pull_request.number,
-    body: `Deployment in progress: [View Deployment](http://ci.example.com/deployments/${pull_request.number})`
-  });
-});
-
-// Event handler for when a pull request is closed (either merged or not merged)
-webhooks.on('pull_request.closed', async ({ id, name, payload }) => {
-  const { repository, pull_request } = payload;
-
-  if (pull_request.merged) {
-    // If the PR was merged, post a success status update
-    await octokit.repos.createCommitStatus({
-      owner: repository.owner.login,
-      repo: repository.name,
+    // Post a status update
+    const status = context.repo({
       sha: pull_request.head.sha,
-      state: 'success',
+      state: 'pending',
       context: 'CI/CD',
-      description: 'PR merged and deployed successfully',
-      target_url: 'http://ci.example.com/build/status' // URL to the CI/CD status page
+      description: 'CI/CD pipeline is running',
+      target_url: 'http://ci.example.com/build/status'
     });
+    await context.octokit.repos.createCommitStatus(status);
 
-    // Post a comment on the PR with the deployment success message
-    await octokit.issues.createComment({
-      owner: repository.owner.login,
-      repo: repository.name,
-      issue_number: pull_request.number,
-      body: `Deployment successful: [View Deployment](http://ci.example.com/deployments/${pull_request.number})`
+    // Post a deployment link comment
+    const comment = context.issue({
+      body: `Deployment in progress: [View Deployment](http://ci.example.com/deployments/${pull_request.number})`
     });
-  } else {
-    // If the PR was not merged, clean up resources related to this PR
-    exec(`./cleanup.sh ${pull_request.number}`, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error during cleanup: ${error.message}`);
-        return;
-      }
-      if (stderr) {
-        console.error(`Cleanup stderr: ${stderr}`);
-        return;
-      }
-      console.log(`Cleanup stdout: ${stdout}`);
-    });
+    await context.octokit.issues.createComment(comment);
+  });
 
-    // Post a comment on the PR indicating the resources have been cleaned up
-    await octokit.issues.createComment({
-      owner: repository.owner.login,
-      repo: repository.name,
-      issue_number: pull_request.number,
-      body: 'Resources cleaned up after PR closure.'
-    });
-  }
-});
+  // Event handler for when a pull request is closed
+  app.on('pull_request.closed', async (context) => {
+    const { repository, pull_request } = context.payload;
 
-// Create an Express app
-const app = express();
+    if (pull_request.merged) {
+      // Post a success status update
+      const status = context.repo({
+        sha: pull_request.head.sha,
+        state: 'success',
+        context: 'CI/CD',
+        description: 'PR merged and deployed successfully',
+        target_url: 'http://ci.example.com/build/status'
+      });
+      await context.octokit.repos.createCommitStatus(status);
 
-// Use the GitHub Webhooks middleware to handle incoming webhook events
-app.use(createNodeMiddleware(webhooks));
+      // Post a deployment success message
+      const comment = context.issue({
+        body: `Deployment successful: [View Deployment](http://ci.example.com/deployments/${pull_request.number})`
+      });
+      await context.octokit.issues.createComment(comment);
+    } else {
+      // Clean up resources
+      exec(`./cleanup.sh ${pull_request.number}`, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`Error during cleanup: ${error.message}`);
+          return;
+        }
+        if (stderr) {
+          console.error(`Cleanup stderr: ${stderr}`);
+          return;
+        }
+        console.log(`Cleanup stdout: ${stdout}`);
+      });
 
-// Start the Express server
-app.listen(PORT, () => {
-  console.log(`App listening at http://localhost:${PORT}`);
-});
+      // Post a cleanup message
+      const comment = context.issue({
+        body: 'Resources cleaned up after PR closure.'
+      });
+      await context.octokit.issues.createComment(comment);
+    }
+  });
+};
