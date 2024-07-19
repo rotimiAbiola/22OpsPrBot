@@ -30,4 +30,4 @@ For more, check out the [Contributing Guide](CONTRIBUTING.md).
 
 ## License
 
-[ISC](LICENSE) © 2024 rotimi abiola
+[ISC](LICENSE) © 2024 22Ops Team - HNG11
