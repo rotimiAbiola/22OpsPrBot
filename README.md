@@ -1,7 +1,7 @@
 # 22OpsPrBot Documentation
 
 ## Introduction
-22OpsPrBot is an automated GitHub bot designed to manage and streamline the pull request (PR) deployment process using Docker and GitHub Actions. The bot deploys PRs into isolated Docker containers for testing and review purposes, provides real-time deployment status updates, and cleans up resources upon PR closure.
+22OpsPrBot is an automated GitHub bot built with [Probot](https://github.com/probot/probot). It was designed to manage and streamline the pull request (PR) deployment process using Docker and GitHub Actions. The bot deploys PRs into isolated Docker containers for testing and review purposes, provides real-time deployment status updates, and cleans up resources upon PR closure.
 
 ## Features
 - **Automated Deployment**: Deploys each PR in an isolated Docker container.
@@ -20,14 +20,31 @@
    ```bash
    git clone https://github.com/rotimiAbiola/22OpsPrBot.git
    cd 22OpsPrBot
+   ```
+   ## Bot Setup
+
+         ```sh
+         # Install dependencies
+         npm install
+         
+         # Run the bot
+         npm start
+         ``` 
 
 2. **Configure Docker**
 Ensure Docker is installed and running on your server. Follow the official Docker installation guide if needed.
+         ```sh
+         # 1. Build container
+         docker build -t pr-bot .
+         
+         # 2. Start container
+         docker run -e APP_ID=<app-id> -e PRIVATE_KEY=<pem-value> pr-bot
+         ```
 
-3. **Set Up GitHub Actions**
+4. **Set Up GitHub Actions**
 The repository contains a `.github/workflows` directory with predefined workflows. These workflows automate the deployment process.
 
-4. **GitHub Bot Authentication**
+5. **GitHub Bot Authentication**
 Create a GitHub App for the bot and configure it to interact with your repository. Follow these steps:
   1. Go to your GitHub account settings and create a new GitHub App.
   2. Set the necessary permissions for the app:
@@ -69,48 +86,21 @@ The bot supports the following commands within PR comments:
 To test the bot locally, follow these steps:
 
 1. **Install Dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+      ```bash
+      pip install -r requirements.txt
+      ```
 2. **Run the Bot Locally:**
-  ```bash
-  python bot.py
-  ```
+     ```bash
+     python bot.py
+     ```
 3. **Docker Build and Run:**
-   ```bash
-   docker build -t 22opsprbot .
-   docker run -d -p 8000:8000 22opsprbot
-  ```
+      ```bash
+      docker build -t 22opsprbot .
+      docker run -d -p 8000:8000 22opsprbot
+      ```
 ## Contributing
 Contributions are welcome Please fork the repository and create a new branch for your feature or bug fix. Ensure that your code adheres to the existing style guidelines and includes appropriate tests.
 
-# pr-bot
-
-> A GitHub App built with [Probot](https://github.com/probot/probot) that A GitHub bot that interacts with PRs by commenting on deployment status and cleaning up resources for closed PRs,
-
-## Setup
-
-```sh
-# Install dependencies
-npm install
-
-# Run the bot
-npm start
-```
-
-## Docker
-
-```sh
-# 1. Build container
-docker build -t pr-bot .
-
-# 2. Start container
-docker run -e APP_ID=<app-id> -e PRIVATE_KEY=<pem-value> pr-bot
-```
-
-## Contributing
-
-If you have suggestions for how pr-bot could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
 
 For more, check out the [Contributing Guide](CONTRIBUTING.md).
 
