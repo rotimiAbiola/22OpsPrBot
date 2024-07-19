@@ -1,6 +1,7 @@
-const { Probot } = require('probot');
+import { Probot } from "probot";
+import { exec } from "child_process"
 
-module.exports = (app) => {
+export default (app) => {
   // Event handler for when a pull request is opened
   app.on('pull_request.opened', async (context) => {
     const { repository, pull_request } = context.payload;
