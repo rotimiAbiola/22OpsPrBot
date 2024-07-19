@@ -1,18 +1,29 @@
 {
   "name": "22opsprbot",
   "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "22Ops Team",
-  "license": "MIT",
+  "private": true,
   "description": "A Github Bot for interacting with pull requests",
+  "author": "22Ops Team",
+  "license": "ISC",
+  "homepage": "https://github.com/rotimiAbiola/22OpsPrBot/",
+  "keywords": [
+    "probot",
+    "github",
+    "probot-app"
+  ],
+  "scripts": {
+    "start": "probot run ./index.js",
+    "test": "node --test"
+  },
   "dependencies": {
-    "@octokit/rest": "^21.0.1",
-    "@octokit/webhooks": "^13.3.0",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2"
-  }
+    "probot": "^13.0.1"
+  },
+  "devDependencies": {
+    "nock": "^14.0.0-beta.5",
+    "smee-client": "^2.0.0"
+  },
+  "engines": {
+    "node": ">= 18"
+  },
+  "type": "module"
 }
