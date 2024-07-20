@@ -5,7 +5,7 @@
 
 ## Features
 - **Automated Deployment**: Deploys each PR in an isolated Docker container.
-- **Multitasking**: handles pull request on multipe branches at the same time
+- **Multitasking**: handles pull request on multipe branches at the same time.
 - **Real-time Updates**: Comments on PRs with deployment status and links.
 - **Resource Management**: Cleans up Docker containers upon PR closure.
 
@@ -72,7 +72,7 @@ This requires installation of all dependencies and a setup of all environment va
 - Open your web browser
 - If you are running your bot on a remote server, input *ip:port* press ENTER OR *localhost:port* if running bot on local machine. 
 - Select **Use an existing Github App**
-- Fill the form with the necessary details
+- Fill the form with the necessary details.
 - Check to confirm the installation of the github apps on your repository.
       - Under Repository Settings > Github Apps
       - Check to see if the App you installed is on the list.
