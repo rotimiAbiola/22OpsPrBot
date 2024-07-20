@@ -1,20 +1,21 @@
 # 22OpsPrBot Documentation
 
 ## Introduction
-22OpsPrBot is an automated GitHub bot built with [Probot](https://github.com/probot/probot). It was designed to manage and streamline the pull request (PR) deployment process using Docker and GitHub Actions. The bot deploys PRs into isolated Docker containers for testing and review purposes, provides real-time deployment status updates, and cleans up resources upon PR closure.
+22OpsPrBot is an automated GitHub bot built with [Probot](https://github.com/probot/probot). It was designed to manage and streamline the pull request (PR) deployment process using Docker. The bot deploys PRs into isolated Docker containers for testing and review purposes, provides real-time deployment status updates, and cleans up resources upon PR closure.
 
 ## Features
 - **Automated Deployment**: Deploys each PR in an isolated Docker container.
+- **Multitasking**: handles pull request on multipe branches at the same time
 - **Real-time Updates**: Comments on PRs with deployment status and links.
 - **Resource Management**: Cleans up Docker containers upon PR closure.
-- **Integration with GitHub Actions**: Uses GitHub Actions to handle deployment workflows.
 
 ## Prerequisites
-- Docker installed on the server.
+- A linux/ubuntu server
 - A GitHub repository with appropriate permissions.
-- GitHub Actions enabled in the repository.
 
 ## Setup and Installation
+
+### Setting up Environment
 
 1. **Clone the Repository**
    ```bash
