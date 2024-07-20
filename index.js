@@ -16,8 +16,8 @@ export default (app) => {
       sha: pull_request.head.sha,
       state: 'pending',
       context: 'CI/CD',
-      description: 'Automation PR bot is running',
-      target_url: 'https://github.com/rotimiAbiola/22OpsPrBot'
+      description: 'Automation PR bot is running'
+
     });
     await context.octokit.repos.createCommitStatus(status);
 
@@ -40,7 +40,8 @@ export default (app) => {
       // Run the deployment script
       const branchName = context.payload.pull_request.head.ref;
       const pullRequestNumber = pull_request.number;
-      const { stdout, stderr } = await execPromise(`chmod +x ./deploy.sh && sudo ./deploy.sh ${branchName} ${pullRequestNumber}`);
+      const forkedRepoUrl = context.payload.pull_request.head.repo.clone_url;
+      const { stdout, stderr } = await execPromise(`chmod +x ./deploy.sh && sudo ./deploy.sh ${branchName} ${pullRequestNumber} ${forkedRepoUrl}`); 
       console.log('Deployment output:', stdout);
       const port = await fs.readFile('port.txt', 'utf8');
       const deploymentUrl = `http://91.229.239.118:${port.trim()}`;
@@ -50,12 +51,28 @@ export default (app) => {
         console.error('Deployment errors:', stderr);
       }
 
+      const currentDate = new Date().toUTCString();
+
+      const markdownComment = `
+      | Name | Status | Preview |Updated (UTC) |
+      |------|--------|---------|--------------|
+      | ${context.payload.pull_request.head.ref} | ✅ Ready ([Inspect](${deploymentUrl})) | [Visit Preview](${deploymentUrl}) | ${currentDate} |    
+      `;
       // Update comment with success
       const comment = context.issue({
-        body: `Deployment completed successfully! Access your application at ${deploymentUrl}`
+        body: markdownComment
       });
       await context.octokit.issues.createComment(comment);
 
+      // Post a success status update
+      const status = context.repo({
+        sha: pull_request.head.sha,
+        state: 'success',
+        context: 'CI/CD',
+        description: 'PR deployed successfully',
+        target_url: `${deploymentUrl}`
+      });
+      await context.octokit.repos.createCommitStatus(status);
 
       // Clean up the temporary file
       await fs.unlink('port.txt');
@@ -68,6 +85,15 @@ export default (app) => {
       });
       await context.octokit.issues.createComment(comment);
 
+      // Post a failure status update
+      const status = context.repo({
+        sha: pull_request.head.sha,
+        state: 'failure',
+        context: 'CI/CD',
+        description: 'PR deployment failed'
+
+      });
+      await context.octokit.repos.createCommitStatus(status);
     }
   });
 
@@ -81,8 +107,8 @@ export default (app) => {
         sha: pull_request.head.sha,
         state: 'success',
         context: 'CI/CD',
-        description: 'PR merged and deployed successfully',
-        target_url: 'https://github.com/rotimiAbiola/22OpsPrBot'
+        description: 'PR merged successfully'
+
       });
       await context.octokit.repos.createCommitStatus(status);
 
