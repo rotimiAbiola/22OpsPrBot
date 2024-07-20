@@ -15,24 +15,64 @@
 
 ## Setup and Installation
 
-### Setting up Environment
-
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/rotimiAbiola/22OpsPrBot.git
-   cd 22OpsPrBot
+**Clone the Repository**
+   ```sh
+   # Change directory into the project directory
+     cd 22OpsPrBot
+   # Clone the Github repository
+     git clone https://github.com/rotimiAbiola/22OpsPrBot.git
    ```
-   ## Bot Setup
+### Setting up Environment
+This requires installation of all dependencies and a setup of all environment variables needed. To simplify the process and ensure compatible versions of dependencies are used, a script environment_setup.sh has been added. 
 
-         ```sh
-         # Install dependencies
-         npm install
+   ```sh
+   # To make the file executable
+     chmod +x environment_setup.sh
+   # Run the environment_setup.sh
+     bash environment_setup.sh
+   ```
+
+### Bot Setup
+```sh
+ npm start
+```
+- Access the .env file and copy out the webhook url
+- Setup the github app:
+   -  Navigate to [GitHub Developer Settings](https://github.com/settings/apps)
+   -  On the GitHub Apps tab, click the **New GitHub App** button
+   -  Fill in the Details:
+         - **GitHub App name:** Provide a name for your app.
+         - **Homepage URL:** Provide a URL for the homepage of your app.
+         - **User authorization callback URL:** This is the URL where users will be redirected after they authorize your app.
+         - **Webhook URL:** Provide a URL to receive webhook payloads.
+         - **Webhook secret:** (optional) A secret key to secure webhook payloads.
+         - **Permissions:** Configure the permissions your app needs:
+               - **Repository**: Read & Write
+               - **Actions**: Read & Write
+         - **Subscribe to events:** Choose the events your app will listen to.
+   -  Click **Create GitHub App** to make changes.
+   -  Generate and download a Private Key to authenticate with Github.
+      **Note:** Securely store the private key file as it will not be shown again.
+   -  Install the GitHub App: On the Github page, click **Install App** and then choose the desired repository.
+   -  Configure Your Application to Use the GitHub App: Set up environment variables in your application (see the **Secrets** section below).
+
          
-         # Run the bot
-         npm start
-         ``` 
+```sh
+ npm start
+ ```
+- Go to the ip:port for sever or localhost. 
+- Select repository that you have already created the github app on
+- Fill the form with the necessary details
+- Check to confirm the installation of the github apps on your repository.
+- Configure the webhook settings:
+      - Pass in the URL
+      - Pass in the secret
+      - Select the json file format
+      - Select all "pull requests" options
+      - Add the webhook
 
-2. **Configure Docker**
+
+**Configure Docker**
 Ensure Docker is installed and running on your server. Follow the official Docker installation guide if needed.
          ```sh
          # 1. Build container
@@ -42,22 +82,11 @@ Ensure Docker is installed and running on your server. Follow the official Docke
          docker run -e APP_ID=<app-id> -e PRIVATE_KEY=<pem-value> pr-bot
          ```
 
-4. **Set Up GitHub Actions**
-The repository contains a `.github/workflows` directory with predefined workflows. These workflows automate the deployment process.
-
-5. **GitHub Bot Authentication**
-Create a GitHub App for the bot and configure it to interact with your repository. Follow these steps:
-  1. Go to your GitHub account settings and create a new GitHub App.
-  2. Set the necessary permissions for the app:
-     - **Repository**: Read & Write
-     - **Actions**: Read & Write
-  3. Generate a private key for the app.
-  4. Install the app on your repository.
-
 ## Environment Variables
 Set the following environment variables in your GitHub repository settings under **Secrets**:
 - `GITHUB_APP_ID`: The App ID of your GitHub App.
 - `GITHUB_PRIVATE_KEY`: The private key generated for your GitHub App.
+- `WEBHOOK_SECRET`: The webhook secret you configured.
 - `DOCKER_USERNAME`: Your Docker Hub username.
 - `DOCKER_PASSWORD`: Your Docker Hub password.
 
@@ -70,8 +99,6 @@ Set the following environment variables in your GitHub repository settings under
 - **Subsequent Commits**: Any new commits to the PR branch update the existing Docker container with the latest changes.
 - **PR Closure**: Upon PR closure, the bot cleans up the associated Docker container to free up resources.
 
-### GitHub Actions Workflow
-The repository includes GitHub Actions workflows located in `.github/workflows`. Key workflows include:
 - **PR Deployment Workflow**: Triggers on PR creation and updates. Builds and deploys the PR in a Docker container.
 - **PR Cleanup Workflow**: Triggers on PR closure. Cleans up Docker containers associated with the closed PR.
 
