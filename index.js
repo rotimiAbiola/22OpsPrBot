@@ -40,7 +40,8 @@ export default (app) => {
     try {
       // Run the deployment script
       const branchName = context.payload.pull_request.head.ref;
-      const { stdout, stderr } = await execPromise(`echo 'QuickQuietQuail' | sudo -S ./deploy.sh ${branchName}`);
+      const sudo_password = process.env.SUDO_PASSWORD;
+      const { stdout, stderr } = await execPromise(`echo ${sudo_password} | sudo -S ./deploy.sh ${branchName}`);
       console.log('Deployment output:', stdout);
       const port = await fs.readFile('port.txt', 'utf8');
       const deploymentUrl = `http://91.229.239.118:${port.trim()}`;
@@ -101,7 +102,8 @@ export default (app) => {
     try {
         // Clean up resources
         const branchName = context.payload.pull_request.head.ref;
-        const { stdout, stderr } = await execPromise(`echo 'QuickQuietQuail' | sudo -S ./cleanup.sh ${branchName}`);
+        const sudo_password = process.env.SUDO_PASSWORD;
+        const { stdout, stderr } = await execPromise(`echo ${sudo_password} | sudo -S ./cleanup.sh ${branchName}`);
         console.log('Cleanup output:', stdout);
 
         if (stderr) {
