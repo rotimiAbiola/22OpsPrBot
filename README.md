@@ -15,22 +15,60 @@
 
 ## Setup and Installation
 
-### Setting up Environment
-
-1. **Clone the Repository**
+**Clone the Repository**
    ```bash
    git clone https://github.com/rotimiAbiola/22OpsPrBot.git
    cd 22OpsPrBot
    ```
-   ## Bot Setup
+### Setting up Environment
+This requires installation of all dependencies and setup of all environment variables needed. To simplify the process and ensure compatible versions of dependencies are used, a script environment_setup.sh has been added. 
 
-         ```sh
-         # Install dependencies
-         npm install
-         
-         # Run the bot
-         npm start
-         ``` 
+   ```sh
+   # To make the file executable
+     chmod +x environment_setup.sh
+   # Run the environment_setup.sh
+     bash environment_setup.sh
+   ```
+
+### Bot Setup
+
+   ```sh
+- cd into the directory
+- Npm start
+- Access the .env file and copy out the webhook url
+- Setup the github app
+      ```sh
+       -  Navigate to [GitHub Developer Settings](https://github.com/settings/apps)
+       -  On the GitHub Apps tab, click the "New GitHub App" button
+       -  Fill in the Details:
+         -   GitHub App name: Provide a name for your app.
+         -   Homepage URL: Provide a URL for the homepage of your app.
+         -   User authorization callback URL: This is the URL where users will be redirected after they authorize your app.
+         - Webhook URL: Provide a URL to receive webhook payloads.
+         - Webhook secret: (optional) A secret key to secure webhook payloads.
+         - Permissions: Configure the permissions your app needs.
+         - Subscribe to events: Choose the events your app will listen to.
+         - Click the "Create GitHub App" button to save your new app.
+      - Generate a Private Key to authenticate with Github
+      - Download the Private Key:
+      - Install the GitHub App: On the Github page, click "Install App" and then choose the desired repository
+      - Configure Your Application to Use the GitHub App: Set the following environment variables in your application: 
+         - APP_ID: Your GitHub App ID.
+         - PRIVATE_KEY: The content of the private key file.
+         - WEBHOOK_SECRET: The webhook secret you configured.
+      - Use GitHub APIs:
+
+- Npm start
+- Go to the ip:port for sever or localhost 
+- Select that you have already created the github app
+- Fill the form with the necessary information
+- Check to confirm the installation of the github apps on your repo
+- Configure the webhook settings:
+      - Pass in the URL
+      - Pass in the secret
+
+         ```
+
 
 2. **Configure Docker**
 Ensure Docker is installed and running on your server. Follow the official Docker installation guide if needed.
