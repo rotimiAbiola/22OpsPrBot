@@ -1,14 +1,21 @@
-#!/bin/bash
+#!/usr/bin/bash
 
-# Get the pull request number from the script arguments
-PR_NUMBER=$1
+# Get the branch name from the argument
+BRANCH_NAME="$1"
 
-echo "Cleaning up resources for PR #${PR_NUMBER}"
+# Find and stop the Docker container running the specified branch
+CONTAINER_ID=$(docker ps -q --filter ancestor=$BRANCH_NAME)
+if [ ! -z "$CONTAINER_ID" ]; then
+    docker stop $CONTAINER_ID
+    docker rm $CONTAINER_ID
+fi
 
-# Example cleanup commands: 
-# Shut down and remove Docker containers defined in a compose file specific to the PR
-docker-compose -f docker-compose.pr${PR_NUMBER}.yml down
-# Remove unused Docker resources
-docker system prune -f
+# Remove the Docker image
+docker rmi $BRANCH_NAME
 
-echo "Cleanup completed for PR #${PR_NUMBER}"
+# Remove the port file if it exists
+if [ -f "port.txt" ]; then
+    rm port.txt
+fi
+
+echo "Cleanup completed for branch: $BRANCH_NAME"
