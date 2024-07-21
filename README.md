@@ -81,11 +81,11 @@ This requires installation of all dependencies and a setup of all environment va
 
 - configure the Repository webhook settings
       Under Repository Settings:
-      - Pass in the URL
-      - Pass in the secret (must be the same secret used while installing the App) 
-      - Select the json file format
-      - Select all "pull requests" options
-      - Add the webhook
+      - **Pass in the URL
+      - **Pass in the secret (must be the same secret used while installing the App) 
+      - **Select the json file format
+      - **Select all "pull requests" options
+      - **Add the webhook
 
 ### .env file content
 your .env file must contain the following variables:
