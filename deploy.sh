@@ -2,9 +2,9 @@
 
 set -e
 
-GITHUB_REPO_URL=https://github.com/rotimiAbiola/flask-example.git
 GITHUB_BRANCH="$1"
 PR_NUMBER="$2"
+GITHUB_REPO_URL="$3"
 TIMESTAMP=$(date "+%Y%m%d%H%M%S")
 FREE_PORT=$(python3 -c 'import socket; s = socket.socket(); s.bind(("", 0)); print(s.getsockname()[1]); s.close()')
 IMAGE_NAME="${GITHUB_BRANCH}${PR_NUMBER}${TIMESTAMP}"
