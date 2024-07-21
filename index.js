@@ -7,6 +7,46 @@ import dotenv from 'dotenv';
 dotenv.config();
 const execPromise = util.promisify(exec);
 
+
+async function checkApprovalStatus(context, pull_request, action) {
+  const { repository } = context.payload;
+  
+  if (action === 'reopened') {
+    const status = context.repo({
+      sha: pull_request.head.sha,
+      state: 'pending',
+      context: 'Approval Review',
+      description: 'Waiting for new approval after reopening'
+    });
+    return await context.octokit.repos.createCommitStatus(status);
+  }
+
+  const reviews = await context.octokit.pulls.listReviews({
+    owner: repository.owner.login,
+    repo: repository.name,
+    pull_number: pull_request.number,
+  });
+
+  let hasApproval = false;
+  if (action === 'synchronize') {
+    const lastPushDate = new Date(pull_request.head.repo.pushed_at);
+    hasApproval = reviews.data.some(review => 
+      review.state === 'APPROVED' && new Date(review.submitted_at) > lastPushDate
+    );
+  } else {
+    hasApproval = reviews.data.some(review => review.state === 'APPROVED');
+  }
+
+  const status = context.repo({
+    sha: pull_request.head.sha,
+    state: hasApproval ? 'success' : 'pending',
+    context: 'Approval Review',
+    description: hasApproval ? 'Approved by a reviewer' : 'Waiting for approval'
+  });
+
+  await context.octokit.repos.createCommitStatus(status);
+}
+
 export default (app) => {
   // Event handler for when a pull request is opened
   app.on(['pull_request.opened', 'pull_request.synchronize', 'pull_request.reopened'], async (context) => {
@@ -17,10 +57,13 @@ export default (app) => {
       sha: pull_request.head.sha,
       state: 'pending',
       context: 'DEPLOY',
-      description: 'Automation PR bot is running'
+      description: 'Automated PR deployment bot is running'
       
     });
     await context.octokit.repos.createCommitStatus(status);
+
+    // Check approval status
+    await checkApprovalStatus(context, pull_request, action);
 
     try {
       // Run the deployment script
@@ -43,7 +86,7 @@ Deployment Successful
 
 | Branch | Status | Preview |Updated (UTC) |
 |--------|--------|---------|--------------|
-| ${context.payload.pull_request.head.ref} | ✅ Ready ([Inspect](${deploymentUrl})) | [Visit Preview](${deploymentUrl}) | ${currentDate} |
+| ${context.payload.pull_request.head.ref} | ✅ Success ([Inspect](${deploymentUrl})) | [Visit Preview](${deploymentUrl}) | ${currentDate} |
 
 `; 
       // Update comment with success
@@ -74,7 +117,7 @@ Deployment Failed
 
 | Branch | Status | Preview |Updated (UTC) |
 |--------|--------|---------|--------------|
-| ${context.payload.pull_request.head.ref} | ❌ Ready | | ${currentDate} |
+| ${context.payload.pull_request.head.ref} | ❌ Failed | ${currentDate} |
 
 `;
       const comment = context.issue({
@@ -92,6 +135,11 @@ Deployment Failed
       });
       await context.octokit.repos.createCommitStatus(status);
     }
+  });
+
+  app.on('pull_request_review.submitted', async (context) => {
+    const { pull_request } = context.payload;
+    await checkApprovalStatus(context, pull_request, 'review_submitted');
   });
 
   // Event handler for when a pull request is closed
