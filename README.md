@@ -84,6 +84,15 @@ This requires installation of all dependencies and a setup of all environment va
       - Select all "pull requests" options
       - Add the webhook
 
+### .env file content
+your .env file must contain the following variables:
+- WEBHOOK_PROXY_URL
+- PORT
+- APP_ID
+- PRIVATE_KEY
+- WEBHOOK_SECRET
+- DEPLOYMENT_IP
+  
 ### Setting Up Bot to Run at the Background
 ```sh
    pm2 start npm -- start
