@@ -71,21 +71,21 @@ This requires installation of all dependencies and a setup of all environment va
 ```sh
  npm start
  ```
-- Open your web browser
-- If you are running your bot on a remote server, input *ip:port* press ENTER OR *localhost:port* if running bot on local machine. 
-- Select **Use an existing Github App**
-- Fill the form with the necessary details.
-- Check to confirm the installation of the github apps on your repository.
+1. Open your web browser
+2. If you are running your bot on a remote server, input *ip:port* press ENTER OR *localhost:port* if running bot on local machine.
+3. Select **Use an existing Github App**
+4. Fill the form with the necessary details.
+5. Check to confirm the installation of the github apps on your repository.
       - Under Repository Settings > Github Apps
       - Check to see if the App you installed is on the list.
 
-- configure the Repository webhook settings
-      Under Repository Settings:
-      - **Pass in the URL
-      - **Pass in the secret (must be the same secret used while installing the App) 
-      - **Select the json file format
-      - **Select all "pull requests" options
-      - **Add the webhook
+6. Configure the Repository webhook settings
+      - Go to Repository Settings:
+      - Pass in the URL:
+      - Pass in the secret (must be the same secret used while installing the App) 
+      - Select the json file format
+      - Select all "pull requests" options
+      - Add the webhook
 
 ### .env file content
 your .env file must contain the following variables:
