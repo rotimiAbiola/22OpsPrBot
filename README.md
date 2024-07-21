@@ -19,13 +19,6 @@
 ### Setting up Environment
 This requires installation of all dependencies and a setup of all environment variables needed. To simplify the process and ensure compatible versions of dependencies are used, a script environment_setup.sh has been added. 
 
-   ```sh
-   # To make the file executable
-     chmod +x environment_setup.sh
-   # Run the environment_setup.sh
-     bash environment_setup.sh
-   ```
-
 ### Clone the Repository
    ```sh
    # Clone the Github repository
@@ -33,6 +26,15 @@ This requires installation of all dependencies and a setup of all environment va
    # Change directory into the project directory
      cd 22OpsPrBot
    ```
+
+### Run the Setup Script
+   ```sh
+   # To make the file executable
+     sudo chmod +x environment_setup.sh
+   # Run the environment_setup.sh
+     bash environment_setup.sh
+   ```
+
 ### Bot Setup
 ```sh
   npm install
