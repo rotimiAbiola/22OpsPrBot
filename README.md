@@ -7,6 +7,7 @@
 - **Automated Deployment**: Deploys each PR in an isolated Docker container.
 - **Multitasking**: handles pull request on multipe branches at the same time.
 - **Real-time Updates**: Comments on PRs with deployment status and links.
+- **Real-time Status Check**: Implements status checks for PR deployment and approval review.
 - **Resource Management**: Cleans up Docker containers upon PR closure.
 
 ## Prerequisites
@@ -34,6 +35,7 @@ This requires installation of all dependencies and a setup of all environment va
    ```
 ### Bot Setup
 ```sh
+  npm install
   npm start
 ```
   We need to stop npm using CTRL + C
@@ -76,8 +78,9 @@ This requires installation of all dependencies and a setup of all environment va
 - Check to confirm the installation of the github apps on your repository.
       - Under Repository Settings > Github Apps
       - Check to see if the App you installed is on the list.
- **Configure the Repository webhook settings**
-      Under Repository Settings: 
+
+- configure the Repository webhook settings
+      Under Repository Settings:
       - Pass in the URL
       - Pass in the secret (must be the same secret used while installing the App) 
       - Select the json file format
