@@ -26,12 +26,6 @@ sudo apt install nodejs npm -y
 # Verify npm installation
 npm --version
 
-# Install Git
-sudo apt install git -y
-
-# Verify Git installation
-git --version
-
 # Install PM2 globally using npm
 sudo npm install -g pm2 -y
 
