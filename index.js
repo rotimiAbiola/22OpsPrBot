@@ -7,7 +7,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 const execPromise = util.promisify(exec);
 
-
 async function checkApprovalStatus(context, pull_request, action) {
   const { repository } = context.payload;
   
@@ -57,8 +56,7 @@ export default (app) => {
       sha: pull_request.head.sha,
       state: 'pending',
       context: 'DEPLOY',
-      description: 'Automated PR deployment bot is running'
-      
+      description: 'Automated PR deployment bot is running' 
     });
     await context.octokit.repos.createCommitStatus(status);
 
@@ -130,8 +128,7 @@ Deployment Failed
         sha: pull_request.head.sha,
         state: 'failure',
         context: 'DEPLOY',
-        description: 'PR deployment failed'
-       
+        description: 'PR deployment failed' 
       });
       await context.octokit.repos.createCommitStatus(status);
     }
@@ -186,7 +183,6 @@ Deployment Failed
           body: 'Cleanup failed.'
         });
         await context.octokit.issues.createComment(comment);
-  
     }
   });
 };
